@@ -1,9 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "react-hot-toast";
+
+type Memo = {
+  id: number;
+  title: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
 interface NewMemoFormProps {
-  onSave: (memo: { title: string; content: string }) => void;
+  onSave: (memo: Memo) => void;
   onCancel: () => void;
 }
 
@@ -15,28 +24,50 @@ export default function NewMemoForm({ onSave, onCancel }: NewMemoFormProps) {
     e.preventDefault();
 
     if (!title.trim() && !content.trim()) {
+      toast.error("タイトルまたは内容を入力してください");
       return;
     }
 
     try {
+      console.log("Sending request to /api/memos with data:", {
+        title: title.trim(),
+        content: content.trim(),
+      });
+
       const response = await fetch("/api/memos", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({ title: title.trim(), content: content.trim() }),
       });
 
+      console.log("Response status:", response.status);
+      console.log(
+        "Response headers:",
+        Object.fromEntries(response.headers.entries())
+      );
+
       if (response.ok) {
         const newMemo = await response.json();
+        console.log("Created memo:", newMemo);
         onSave(newMemo);
         setTitle("");
         setContent("");
       } else {
-        console.error("Failed to create memo");
+        const errorData = await response.json().catch(() => ({}));
+        console.error(
+          "Failed to create memo. Status:",
+          response.status,
+          "Error:",
+          errorData
+        );
+        toast.error("メモの作成に失敗しました");
       }
     } catch (error) {
       console.error("Error creating memo:", error);
+      toast.error("メモの作成に失敗しました");
     }
   };
 
@@ -49,7 +80,7 @@ export default function NewMemoForm({ onSave, onCancel }: NewMemoFormProps) {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           className="text-3xl font-bold text-gray-900 w-full border-none outline-none bg-transparent"
-          placeholder="Untitled"
+          placeholder="メモタイトル"
         />
       </div>
 
@@ -59,7 +90,7 @@ export default function NewMemoForm({ onSave, onCancel }: NewMemoFormProps) {
           value={content}
           onChange={(e) => setContent(e.target.value)}
           className="w-full h-full border-none outline-none resize-none text-gray-700 leading-relaxed"
-          placeholder="Start writing your note..."
+          placeholder="ここにメモを入力してください"
         />
       </div>
 

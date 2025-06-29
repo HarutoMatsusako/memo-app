@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import prisma from "@/lib/prisma";
 
 export async function PUT(
@@ -6,13 +8,22 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { id } = params;
     const data = await req.json();
     const { title, content } = data;
 
-    // メモの存在確認
-    const existingMemo = await prisma.memo.findUnique({
-      where: { id: parseInt(id) },
+    // メモの存在確認とユーザー権限確認
+    const existingMemo = await prisma.memo.findFirst({
+      where: {
+        id: parseInt(id),
+        userId: session.user.id,
+      } as any,
     });
 
     if (!existingMemo) {
@@ -40,11 +51,20 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { id } = params;
 
-    // メモの存在確認
-    const existingMemo = await prisma.memo.findUnique({
-      where: { id: parseInt(id) },
+    // メモの存在確認とユーザー権限確認
+    const existingMemo = await prisma.memo.findFirst({
+      where: {
+        id: parseInt(id),
+        userId: session.user.id,
+      } as any,
     });
 
     if (!existingMemo) {
