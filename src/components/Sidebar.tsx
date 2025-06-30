@@ -52,10 +52,8 @@ export default function Sidebar({
     memoTitle: "",
   });
 
-  // propsからmemosを優先使用、なければSWRのデータを使用
   const memoList = memos || swrMemos;
 
-  // クリックアウト機能
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
@@ -73,10 +71,17 @@ export default function Sidebar({
     };
   }, [openMenuId]);
 
-  if (isLoading) return <div className="w-64 bg-gray-50 p-4">Loading...</div>;
+  if (isLoading)
+    return (
+      <div className="w-full md:w-64 bg-gray-50 p-4 h-full">Loading...</div>
+    );
   if (error) {
     toast.error("メモの読み込みに失敗しました");
-    return <div className="w-64 bg-gray-50 p-4">Failed to load memos</div>;
+    return (
+      <div className="w-full md:w-64 bg-gray-50 p-4 h-full">
+        Failed to load memos
+      </div>
+    );
   }
 
   const handleEdit = (memo: Memo) => {
@@ -102,14 +107,11 @@ export default function Sidebar({
       });
 
       if (response.ok) {
-        // メモ一覧を再取得
         swrMutate();
       } else {
-        console.error("Failed to delete memo");
         toast.error("メモの削除に失敗しました");
       }
     } catch (error) {
-      console.error("Error deleting memo:", error);
       toast.error("メモの削除に失敗しました");
     }
   };
@@ -128,12 +130,11 @@ export default function Sidebar({
 
   return (
     <>
-      <div className="w-64 bg-gray-50 border-r border-gray-200 flex flex-col h-screen">
-        {/* ユーザー情報 */}
-        <div className="p-4 border-b border-gray-200">
+      <div className="w-full md:w-64 bg-gray-50 md:border-r border-gray-200 flex flex-col h-full md:h-screen">
+        <div className="p-3 md:p-4 border-b border-gray-200">
           {session ? (
             <>
-              <div className="flex items-center space-x-3 mb-4">
+              <div className="flex items-center space-x-3 mb-3 md:mb-4">
                 <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
                   {session.user?.name?.charAt(0) || "U"}
                 </div>
@@ -163,9 +164,8 @@ export default function Sidebar({
           )}
         </div>
 
-        {/* メモ一覧 */}
         <div className="flex-1 overflow-y-auto">
-          <div className="p-4">
+          <div className="p-3 md:p-4">
             <h2 className="text-sm font-semibold text-gray-900 mb-3">Notes</h2>
             <div className="space-y-1">
               {memoList &&
@@ -193,13 +193,12 @@ export default function Sidebar({
                           e.stopPropagation();
                           toggleMenu(memo.id);
                         }}
-                        className="p-1 rounded hover:bg-gray-200 transition-colors opacity-0 group-hover:opacity-100"
+                        className="p-1 rounded hover:bg-gray-200 transition-colors md:opacity-0 md:group-hover:opacity-100"
                       >
                         <EllipsisVerticalIcon className="w-4 h-4 text-gray-500" />
                       </button>
                     </div>
 
-                    {/* ドロップダウンメニュー */}
                     {openMenuId === memo.id && (
                       <div className="absolute right-0 top-full mt-1 w-32 bg-white border border-gray-200 rounded-md shadow-lg z-10">
                         <button
@@ -228,8 +227,7 @@ export default function Sidebar({
           </div>
         </div>
 
-        {/* New Note ボタン（常に表示） */}
-        <div className="p-4 border-t border-gray-200">
+        <div className="p-3 md:p-4 border-t border-gray-200">
           <button
             onClick={onNewNote}
             className="w-full px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
@@ -239,7 +237,6 @@ export default function Sidebar({
         </div>
       </div>
 
-      {/* 削除確認モーダル */}
       <DeleteConfirmModal
         isOpen={deleteModal.isOpen}
         onClose={handleDeleteModalClose}

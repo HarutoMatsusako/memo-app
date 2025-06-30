@@ -65,11 +65,9 @@ export default function MemoEditor({
         onSave(updatedMemo);
         setInternalIsEditing(false);
       } else {
-        console.error("Failed to save memo");
         toast.error("メモの更新に失敗しました");
       }
     } catch (error) {
-      console.error("Error saving memo:", error);
       toast.error("メモの更新に失敗しました");
     }
   };
@@ -91,14 +89,13 @@ export default function MemoEditor({
     }
   };
 
-  // メモが0件の場合のプレースホルダーUI
   if (!memos || memos.length === 0) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-white">
-        <div className="text-center">
-          <div className="text-gray-400 mb-6">
+      <div className="flex-1 bg-white min-h-0 flex items-start md:items-center md:pt-32 justify-start md:justify-center">
+        <div className="text-left md:text-center p-4 w-full md:max-w-md">
+          <div className="text-gray-400">
             <svg
-              className="w-16 h-16 mx-auto mb-4"
+              className="w-12 h-12 md:w-16 md:h-16 mb-4 md:mx-auto"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -110,10 +107,10 @@ export default function MemoEditor({
                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
               />
             </svg>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-2">
               メモを作成してください
             </h2>
-            <p className="text-gray-500">
+            <p className="text-sm md:text-base text-gray-500">
               新しいメモを作成して、アイデアを整理しましょう
             </p>
           </div>
@@ -122,15 +119,14 @@ export default function MemoEditor({
     );
   }
 
-  // メモが選択されていない場合
   if (!selectedMemo) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-white">
-        <div className="text-center">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+      <div className="flex-1 bg-white min-h-0 flex items-start md:items-center md:pt-32 justify-start md:justify-center">
+        <div className="text-left md:text-center p-4 w-full md:max-w-md">
+          <h2 className="text-xl md:text-2xl font-semibold text-gray-900 mb-2">
             メモ一覧へようこそ
           </h2>
-          <p className="text-gray-500">
+          <p className="text-sm md:text-base text-gray-500">
             サイドバーからメモを選択するか、新しいメモを作成してください。
           </p>
         </div>
@@ -139,35 +135,33 @@ export default function MemoEditor({
   }
 
   return (
-    <div className="flex-1 bg-white flex flex-col">
-      {/* ヘッダー */}
-      <div className="border-b border-gray-200 p-6">
+    <div className="flex-1 bg-white flex flex-col min-h-0">
+      <div className="border-b border-gray-200 p-4 md:p-6">
         {isEditing ? (
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="text-3xl font-bold text-gray-900 w-full border-none outline-none bg-transparent"
+            className="text-2xl md:text-3xl font-bold text-gray-900 w-full border-none outline-none bg-transparent"
             placeholder="メモタイトル"
           />
         ) : (
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
             {title || "Untitled"}
           </h1>
         )}
       </div>
 
-      {/* コンテンツエリア */}
-      <div className="flex-1 p-6">
+      <div className="flex-1 p-4 md:p-6 overflow-y-auto">
         {isEditing ? (
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="w-full h-full border-none outline-none resize-none text-gray-700 leading-relaxed"
+            className="w-full h-full border-none outline-none resize-none text-gray-700 leading-relaxed text-sm md:text-base"
             placeholder="ここにメモを入力してください"
           />
         ) : (
-          <div className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+          <div className="text-gray-700 leading-relaxed whitespace-pre-wrap text-sm md:text-base">
             {content ? (
               content.split("\n").map((line, index) => (
                 <div key={index} className="mb-2">
@@ -190,20 +184,19 @@ export default function MemoEditor({
         )}
       </div>
 
-      {/* アクションボタン */}
-      <div className="border-t border-gray-200 p-6">
+      <div className="border-t border-gray-200 p-4 md:p-6">
         <div className="flex space-x-3">
           {isEditing ? (
             <>
               <button
                 onClick={handleSave}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium"
+                className="px-3 py-2 md:px-4 md:py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium text-sm md:text-base"
               >
                 保存
               </button>
               <button
                 onClick={handleCancel}
-                className="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors font-medium"
+                className="px-3 py-2 md:px-4 md:py-2 bg-white text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors font-medium text-sm md:text-base"
               >
                 キャンセル
               </button>
@@ -211,7 +204,7 @@ export default function MemoEditor({
           ) : (
             <button
               onClick={handleEdit}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium"
+              className="px-3 py-2 md:px-4 md:py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium text-sm md:text-base"
             >
               編集
             </button>
