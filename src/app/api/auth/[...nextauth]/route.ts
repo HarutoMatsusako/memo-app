@@ -14,9 +14,6 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET || "fallback-secret-key-for-development",
   callbacks: {
     session: ({ session, token }: any) => {
-      console.log("Session callback - token:", token);
-      console.log("Session callback - session:", session);
-
       return {
         ...session,
         user: {
@@ -26,10 +23,6 @@ export const authOptions: NextAuthOptions = {
       };
     },
     jwt: ({ token, user, account }: any) => {
-      console.log("JWT callback - token:", token);
-      console.log("JWT callback - user:", user);
-      console.log("JWT callback - account:", account);
-
       if (user) {
         token.sub = user.id || token.sub;
       }
@@ -37,11 +30,9 @@ export const authOptions: NextAuthOptions = {
         token.sub = token.sub;
       }
 
-      console.log("JWT callback - final token:", token);
       return token;
     },
   },
-  debug: true,
 };
 
 const handler = NextAuth(authOptions);

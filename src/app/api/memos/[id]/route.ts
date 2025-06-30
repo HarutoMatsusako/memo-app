@@ -18,7 +18,6 @@ export async function PUT(
     const data = await req.json();
     const { title, content } = data;
 
-    // メモの存在確認とユーザー権限確認
     const existingMemo = await prisma.memo.findFirst({
       where: {
         id: parseInt(id),
@@ -30,7 +29,6 @@ export async function PUT(
       return NextResponse.json({ error: "Memo not found" }, { status: 404 });
     }
 
-    // メモを更新
     const updatedMemo = await prisma.memo.update({
       where: { id: parseInt(id) },
       data: { title, content },
@@ -59,7 +57,6 @@ export async function DELETE(
 
     const { id } = params;
 
-    // メモの存在確認とユーザー権限確認
     const existingMemo = await prisma.memo.findFirst({
       where: {
         id: parseInt(id),
@@ -71,7 +68,6 @@ export async function DELETE(
       return NextResponse.json({ error: "Memo not found" }, { status: 404 });
     }
 
-    // メモを削除
     await prisma.memo.delete({
       where: { id: parseInt(id) },
     });

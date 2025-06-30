@@ -18,33 +18,16 @@ type Memo = {
 };
 
 const fetcher = async (url: string) => {
-  console.log("SWR fetcher - Fetching:", url);
-
-  // セッション情報を取得
-  const sessionResponse = await fetch("/api/auth/session");
-  const session = await sessionResponse.json();
-  console.log("SWR fetcher - Session:", session);
-
   const response = await fetch(url, {
-    credentials: "include", // セッションクッキーを含める
+    credentials: "include",
   });
-  console.log("SWR fetcher - Response status:", response.status);
-  console.log(
-    "SWR fetcher - Response headers:",
-    Object.fromEntries(response.headers.entries())
-  );
 
   if (!response.ok) {
     let errorData = {};
     try {
       const responseText = await response.text();
-      console.log("SWR fetcher - Response text:", responseText);
       errorData = responseText ? JSON.parse(responseText) : {};
     } catch (parseError) {
-      console.error(
-        "SWR fetcher - Failed to parse error response:",
-        parseError
-      );
       errorData = { message: "Failed to parse error response" };
     }
     throw new Error(
@@ -55,7 +38,6 @@ const fetcher = async (url: string) => {
   }
 
   const data = await response.json();
-  console.log("SWR fetcher - Data:", data);
   return data;
 };
 
@@ -65,16 +47,8 @@ export default function MemoApp() {
   const [isCreatingNew, setIsCreatingNew] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
-  // セッション情報のデバッグ
-  useEffect(() => {
-    console.log("MemoApp - Session status:", status);
-    console.log("MemoApp - Session data:", session);
-  }, [session, status]);
-
-  // SWRでメモ一覧を取得（mutate関数を利用するため）
   const { data: memos, mutate } = useSWR<Memo[]>("/api/memos", fetcher);
 
-  // メモが0件になった場合、selectedMemoをリセット
   useEffect(() => {
     if (memos && memos.length === 0) {
       setSelectedMemo(null);
@@ -84,18 +58,22 @@ export default function MemoApp() {
 
   if (status === "loading") {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-lg">Loading...</div>
+      <div className="flex items-center justify-center h-screen p-4">
+        <div className="text-base md:text-lg">Loading...</div>
       </div>
     );
   }
 
   if (!session) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Welcome to Memo App</h1>
-          <p className="text-gray-600 mb-4">Please sign in to continue</p>
+      <div className="flex items-center justify-center h-screen p-4">
+        <div className="text-center max-w-md w-full">
+          <h1 className="text-xl md:text-2xl font-bold mb-3 md:mb-4">
+            Welcome to Memo App
+          </h1>
+          <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">
+            Please sign in to continue
+          </p>
           <AuthButton />
         </div>
       </div>
@@ -124,7 +102,6 @@ export default function MemoApp() {
     setSelectedMemo(updatedMemo);
     setIsCreatingNew(false);
     setIsEditing(false);
-    // メモ一覧を更新
     mutate();
   };
 
@@ -132,7 +109,6 @@ export default function MemoApp() {
     setSelectedMemo(newMemo);
     setIsCreatingNew(false);
     setIsEditing(false);
-    // メモ一覧を更新
     mutate();
   };
 
@@ -143,27 +119,31 @@ export default function MemoApp() {
 
   return (
     <>
-      <div className="flex h-screen bg-white">
-        <Sidebar
-          selectedMemoId={selectedMemo?.id || null}
-          onMemoSelect={handleMemoSelect}
-          onEditMemo={handleEditMemo}
-          onNewNote={handleNewNote}
-          mutate={mutate}
-          memos={memos}
-        />
-        {isCreatingNew ? (
-          <NewMemoForm onSave={handleNewMemoSave} onCancel={handleCancel} />
-        ) : (
-          <MemoEditor
-            selectedMemo={selectedMemo}
-            onSave={handleSaveMemo}
-            onCancel={handleCancel}
+      <div className="flex flex-col md:flex-row h-screen bg-white">
+        <div className="w-full md:w-64 md:flex-shrink-0">
+          <Sidebar
+            selectedMemoId={selectedMemo?.id || null}
+            onMemoSelect={handleMemoSelect}
+            onEditMemo={handleEditMemo}
+            onNewNote={handleNewNote}
+            mutate={mutate}
             memos={memos}
-            isEditing={isEditing}
-            onEdit={() => setIsEditing(true)}
           />
-        )}
+        </div>
+        <div className="flex-1 w-full">
+          {isCreatingNew ? (
+            <NewMemoForm onSave={handleNewMemoSave} onCancel={handleCancel} />
+          ) : (
+            <MemoEditor
+              selectedMemo={selectedMemo}
+              onSave={handleSaveMemo}
+              onCancel={handleCancel}
+              memos={memos}
+              isEditing={isEditing}
+              onEdit={() => setIsEditing(true)}
+            />
+          )}
+        </div>
       </div>
       <ToasterProvider />
     </>
