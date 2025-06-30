@@ -46,7 +46,7 @@ export default function NewMemoForm({ onSave, onCancel }: NewMemoFormProps) {
       } else {
         toast.error("メモの作成に失敗しました");
       }
-    } catch (error) {
+    } catch {
       toast.error("メモの作成に失敗しました");
     }
   };

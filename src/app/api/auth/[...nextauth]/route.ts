@@ -1,7 +1,8 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import NextAuth from "next-auth/next";
 import GoogleProvider from "next-auth/providers/google";
 
-export const authOptions: NextAuthOptions = {
+export const authOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -9,7 +10,7 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   session: {
-    strategy: "jwt",
+    strategy: "jwt" as const,
   },
   secret: process.env.NEXTAUTH_SECRET || "fallback-secret-key-for-development",
   callbacks: {
