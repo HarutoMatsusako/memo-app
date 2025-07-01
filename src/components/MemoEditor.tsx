@@ -67,7 +67,7 @@ export default function MemoEditor({
       } else {
         toast.error("メモの更新に失敗しました");
       }
-    } catch (error) {
+    } catch {
       toast.error("メモの更新に失敗しました");
     }
   };

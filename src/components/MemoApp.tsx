@@ -27,7 +27,7 @@ const fetcher = async (url: string) => {
     try {
       const responseText = await response.text();
       errorData = responseText ? JSON.parse(responseText) : {};
-    } catch (parseError) {
+    } catch {
       errorData = { message: "Failed to parse error response" };
     }
     throw new Error(
@@ -126,7 +126,6 @@ export default function MemoApp() {
             onMemoSelect={handleMemoSelect}
             onEditMemo={handleEditMemo}
             onNewNote={handleNewNote}
-            mutate={mutate}
             memos={memos}
           />
         </div>

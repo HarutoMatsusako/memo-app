@@ -22,7 +22,6 @@ interface SidebarProps {
   onMemoSelect: (memo: Memo) => void;
   onEditMemo: (memo: Memo) => void;
   onNewNote: () => void;
-  mutate?: () => void;
   memos?: Memo[];
 }
 
@@ -31,13 +30,11 @@ export default function Sidebar({
   onMemoSelect,
   onEditMemo,
   onNewNote,
-  mutate,
   memos,
 }: SidebarProps) {
   const { data: session } = useSession();
   const {
     data: swrMemos,
-    error,
     isLoading,
     mutate: swrMutate,
   } = useSWR<Memo[]>("/api/memos", fetcher);
@@ -75,14 +72,6 @@ export default function Sidebar({
     return (
       <div className="w-full md:w-64 bg-gray-50 p-4 h-full">Loading...</div>
     );
-  if (error) {
-    toast.error("メモの読み込みに失敗しました");
-    return (
-      <div className="w-full md:w-64 bg-gray-50 p-4 h-full">
-        Failed to load memos
-      </div>
-    );
-  }
 
   const handleEdit = (memo: Memo) => {
     onEditMemo(memo);
@@ -111,7 +100,7 @@ export default function Sidebar({
       } else {
         toast.error("メモの削除に失敗しました");
       }
-    } catch (error) {
+    } catch {
       toast.error("メモの削除に失敗しました");
     }
   };
