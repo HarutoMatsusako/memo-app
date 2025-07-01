@@ -126,7 +126,6 @@ export default function MemoApp() {
             onMemoSelect={handleMemoSelect}
             onEditMemo={handleEditMemo}
             onNewNote={handleNewNote}
-            mutate={mutate}
             memos={memos}
           />
         </div>
